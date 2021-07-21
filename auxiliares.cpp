@@ -519,3 +519,65 @@ bool esUnicaMovidaPosibleJugador(posicion const &p, coordenada const &o, coorden
     }
     return unicaMovida;
 }
+
+// Ejercicio 9
+
+
+int jaqueMateEnSecuenciaForzada(posicion const &p){
+    secuencia s = crearSecuenciaForzada(p);
+    return s.size()-1;
+}
+
+secuencia crearSecuenciaForzada(posicion p){
+    secuencia s;
+    posicion pf;
+    coordenada o; coordenada d;
+    int i = 0;
+    for(o.first = 0; o.first < LARGO_TABLERO; o.first++){
+        for(o.second = 0; o.second < ANCHO_TABLERO; o.second++){
+            if(color(tableroA(p), o) == jugador(p)){
+                for(d.first = 0; d.first < LARGO_TABLERO; d.first++){
+                    for(d.second = 0; d.second < ANCHO_TABLERO; d.second++){
+                        if(esJugadaLegal(p,o,d)){
+                            pf = crearPosicionSiguiente(p,o,d);
+                        }
+                        if(estaForzado(pf)){
+                            s.push_back(make_pair(o,d));
+                            p = movimientoForzadoPar(pf);
+                            i++;
+                            if(i < 3 && !esJaqueMate(p)){
+                                o = make_pair(0, ANCHO_TABLERO);
+                                d = make_pair(LARGO_TABLERO,ANCHO_TABLERO);
+                            } else {
+                                o = make_pair(LARGO_TABLERO, ANCHO_TABLERO);
+                                d = make_pair(LARGO_TABLERO,ANCHO_TABLERO);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return s;
+}
+
+bool estaForzado(posicion const &pm){
+    bool forzado = false;
+    coordenada o; coordenada d;
+    for(o.first = 0; o.first < LARGO_TABLERO; o.first++){
+        for(o.second = 0; o.second < ANCHO_TABLERO; o.second++){
+            if(color(tableroA(pm), o) == jugador(pm)){
+                for(d.first = 0; d.first < LARGO_TABLERO; d.first++){
+                    for(d.second = 0; d.second < ANCHO_TABLERO; d.second++){
+                        if(o != d && esJugadaLegal(pm, o, d) && esUnicaMovidaPosibleJugador(pm, o, d)){
+                            forzado = forzado || d.second < ANCHO_TABLERO;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return forzado;
+}
+
+
