@@ -86,6 +86,11 @@ posicion movimientoForzadoImpar(posicion const &p, pair <coordenada, coordenada>
 posicion movimientoForzadoPar(posicion const &p);
 bool esUnicaMovidaPosibleJugador(posicion const &p, coordenada const &o, coordenada const &d);
 
+int jaqueMateEnSecuenciaForzada(posicion const &p);
+secuencia crearSecuenciaForzada(posicion p);
+bool estaForzado(posicion const &pm);
+
+
 
 
 
