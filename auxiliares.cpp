@@ -522,43 +522,73 @@ bool esUnicaMovidaPosibleJugador(posicion const &p, coordenada const &o, coorden
 
 // Ejercicio 9
 
-
 int jaqueMateEnSecuenciaForzada(posicion const &p){
     secuencia s = crearSecuenciaForzada(p);
-    return s.size()-1;
+    return s.size();
 }
 
 secuencia crearSecuenciaForzada(posicion p){
-    secuencia s;
-    posicion pf;
-    coordenada o; coordenada d;
-    int i = 0;
-    for(o.first = 0; o.first < LARGO_TABLERO; o.first++){
-        for(o.second = 0; o.second < ANCHO_TABLERO; o.second++){
-            if(color(tableroA(p), o) == jugador(p)){
-                for(d.first = 0; d.first < LARGO_TABLERO; d.first++){
-                    for(d.second = 0; d.second < ANCHO_TABLERO; d.second++){
-                        if(esJugadaLegal(p,o,d)){
-                            pf = crearPosicionSiguiente(p,o,d);
-                        }
-                        if(estaForzado(pf)){
-                            s.push_back(make_pair(o,d));
-                            p = movimientoForzadoPar(pf);
-                            i++;
-                            if(i < 3 && !esJaqueMate(p)){
-                                o = make_pair(0, ANCHO_TABLERO);
-                                d = make_pair(LARGO_TABLERO,ANCHO_TABLERO);
-                            } else {
-                                o = make_pair(LARGO_TABLERO, ANCHO_TABLERO);
-                                d = make_pair(LARGO_TABLERO,ANCHO_TABLERO);
+    secuencia secuenciaForzada; secuencia s; secuencia t;
+    posicion ps; posicion pi = p;
+    coordenada o; coordenada d; coordenada a; coordenada b;
+    for(int i = 1; i <= 3; i++){
+        for(o.first = 0; o.first < LARGO_TABLERO; o.first++){
+            for(o.second = 0; o.second < ANCHO_TABLERO; o.second++){
+                if(color(tableroA(p), o) == jugador(p)){
+                    for(d.first = 0; d.first < LARGO_TABLERO; d.first++){
+                        for(d.second = 0; d.second < ANCHO_TABLERO; d.second++){
+                            if(esJugadaLegal(p,o,d)){
+                                ps = crearPosicionSiguiente(p,o,d);
+                                if(esJaqueMate(ps)){
+                                    s.push_back(make_pair(o,d));
+                                    o = make_pair(LARGO_TABLERO, ANCHO_TABLERO);
+                                    d = make_pair(LARGO_TABLERO, ANCHO_TABLERO);
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        o.first = 0;
+        if(s.size() > 0){
+            o.first = LARGO_TABLERO;
+            i = 4;
+        }
+        while(o.first < LARGO_TABLERO){
+            for(o.second = 0; o.second < ANCHO_TABLERO; o.second++){
+                if(color(tableroA(p), o) == jugador(p) && o != a && o != b){
+                    for(d.first = 0; d.first < LARGO_TABLERO; d.first++){
+                        for(d.second = 0; d.second < ANCHO_TABLERO; d.second++){
+                            if(esJugadaLegal(p,o,d)){
+                                ps = crearPosicionSiguiente(p,o,d);
+                                if(estaForzado(ps)){
+                                    if(i == 1){
+                                        a = o;
+                                    }
+                                    if(i == 2){
+                                        b = o;
+                                    }
+                                    t.push_back(make_pair(o,d));
+                                    p = movimientoForzadoPar(ps);
+                                    o = make_pair(LARGO_TABLERO, ANCHO_TABLERO);
+                                    d = make_pair(LARGO_TABLERO, ANCHO_TABLERO);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            o.first++;
+        }
+        if(t.size() > 2){
+            i = 0;
+            p = pi;
+            t.clear();
+        }
     }
-    return s;
+    secuenciaForzada = concat(s,t);
+    return secuenciaForzada;
 }
 
 bool estaForzado(posicion const &pm){
@@ -579,5 +609,15 @@ bool estaForzado(posicion const &pm){
     }
     return forzado;
 }
+
+secuencia concat (secuencia s, secuencia t){
+    secuencia result;
+    for(int i = 0; i < s.size(); i++){
+        result.push_back(s[i]);
+    }
+    for(int i = 0; i < t.size(); i++){
+        result.push_back(t[i]);
+    }
+    return result;
 
 
